@@ -23,6 +23,7 @@ let state = {
 	wordsPoints: [],
 	recentPoint: null,
 	letters: [],
+	wordAttempts: [],
 }
 
 // Function to draw the N-gon with labels
@@ -103,6 +104,14 @@ function render() {
 		activeWordDivHTML += `[${state.activeWord}]`;
 	}
 	activeWordDiv.innerHTML = activeWordDivHTML;
+
+	// Word attempts
+	const wordAttemptsDiv = document.getElementById('word-attempts');
+	let wordAttemptsHTML = "";
+	for (let word of state.wordAttempts) {
+		wordAttemptsHTML += `<span class="attempt-word" onclick="addWord('${word}')">${word}</span>`;
+	}
+	wordAttemptsDiv.innerHTML = wordAttemptsHTML;
 
 	// Draw letters
 	for (let point of letterPoints) {
@@ -216,6 +225,33 @@ function clickPoint(x, y) {
 	render();
 }
 
+function addLetter(letter) {
+	const pointIndex = letterPoints.findIndex(p => p.letter === letter);
+	if (pointIndex === -1) {
+		return;
+	}
+	const point = letterPoints[pointIndex];
+
+	if (state.recentPoint?.side === point.side) {
+		alert("You can't select two points on the same side");
+		return;
+	}
+
+	state.activeWordPoints.push(point);
+	state.activeWord += point.letter;
+
+	state.recentPoint = point;
+
+	render();
+}
+
+function addWord(word) {
+	// assume word is valid
+	for (let letter of word) {
+		addLetter(letter);
+	}
+}
+
 // Event listener for canvas clicks
 canvas.addEventListener('click', (event) => {
 	const rect = canvas.getBoundingClientRect();
@@ -245,23 +281,7 @@ window.addEventListener('keydown', (event) => {
 		enter();
 	} else {
 		const letter = event.key.toUpperCase();
-		const pointIndex = letterPoints.findIndex(p => p.letter === letter);
-		if (pointIndex === -1) {
-			return;
-		}
-		const point = letterPoints[pointIndex];
-
-		if (state.recentPoint?.side === point.side) {
-			alert("You can't select two points on the same side");
-			return;
-		}
-
-		state.activeWordPoints.push(point);
-		state.activeWord += point.letter;
-
-		state.recentPoint = point;
-
-		render();
+		addLetter(letter);
 	}
 });
 
@@ -345,6 +365,8 @@ function enter() {
 
 	state.words.push(word);
 	state.wordsPoints.push([...state.activeWordPoints]);
+
+	state.wordAttempts.push(word);
 
 	// keep last letter
 	state.activeWord = word.slice(-1);
@@ -550,6 +572,7 @@ function newGame({ todays } = {}) {
 		recentPoint: null,
 		solutionWords,
 		startTime: Date.now(),
+		wordAttempts: [],
 	}
 	render();
 
