@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Letter Polygoned</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKV1T0FPDP"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+
+	gtag('config', 'G-RKV1T0FPDP');
+</script>
+
+<body>
+	<div class="container">
+		<div class="controls">
+			<h1>Letter Polygoned</h1>
+
+			<label for="n">Number of Sides (n):</label>
+			<input type="number" id="n" min="3" value="5">
+
+			<label for="m">Points per Side (m):</label>
+			<input type="number" id="m" min="1" value="3">
+
+			<button id="newgame" onclick="newGame()">New Game</button>
+			<button id="viewsolution" onclick="viewSolution()" disabled>View Solution</button>
+			<hr>
+			<button id="backspace" onclick="backspace()" disabled>Backspace</button>
+			<button id="enter" onclick="enter()" disabled>Enter</button>
+
+		</div>
+
+		<div class="canvas-wrapper">
+			<div id="active-word"></div>
+			<canvas id="canvas"></canvas>
+		</div>
+	</div>
+
+	<script src="script.js"></script>
+</body>
+
+</html>

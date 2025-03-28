@@ -1,0 +1,123 @@
+/* General Styling */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background: #f0f0f0;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Container Layout */
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    width: 100%;
+    gap: 20px;
+  }
+  
+  /* Controls Section */
+  .controls {
+    flex: 1 1 calc(33.33% - 20px);  /* Col-3 on desktop */
+    background: #fff3f2;  /* Light pinkish white */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid #ffcbc9; /* Light coral border */
+  }
+  
+  .controls label {
+    font-weight: bold;
+  }
+  
+  .controls input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Button Styling */
+  .controls button {
+    padding: 10px 15px;
+    border: none;
+    background: #ff6f61;  /* Warm salmon */
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 4px;
+  }
+  
+  .controls button:hover:not(:disabled) {
+    background: #e85c50;  /* Darker salmon on hover */
+  }
+  
+  .controls button:disabled {
+    background: #d3d3d3;  /* Light gray for inactive buttons */
+    cursor: not-allowed;
+  }
+  
+  /* Canvas Section with Active Word Inside */
+  .canvas-wrapper {
+    flex: 1 1 calc(66.66% - 20px);  /* Col-6 on desktop */
+    background: #fff3f2;  /* Match control bg */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid #ffcbc9;  /* Light coral border */
+    position: relative;
+  }
+  
+  /* Active Word Styling inside Canvas */
+  #active-word {
+    width: 100%;
+    padding: 10px;
+    background: #ff578b;  /* Pinkish highlight */
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: 2px solid #ffcbc9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+  
+  /* Canvas */
+  canvas {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    border: 1px solid #ccc;
+    background: #faa6a4;  /* Soft coral pink canvas */
+    margin-top: 10px; 
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column; /* Stack vertically on mobile */
+    }
+  
+    .controls, .canvas-wrapper {
+      flex: 1 1 100%;
+    }
+  }
+  
