@@ -285,6 +285,19 @@ window.addEventListener('keydown', (event) => {
 	}
 });
 
+function changeValue(id, delta) {
+    const input = document.getElementById(id);
+    let newValue = parseInt(input.value) + delta;
+
+    // Ensure values stay within the valid range
+    if (id === 'n' && newValue >= 3) {
+        input.value = newValue;
+    }
+    if (id === 'm' && newValue >= 1) {
+        input.value = newValue;
+    }
+}
+
 function check_word(word) {
 	if (word.length < 3) {
 		alert("Word must be at least 3 letters long");

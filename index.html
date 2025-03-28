@@ -23,11 +23,23 @@
 		<div class="controls">
 			<h1>Letter Polygoned</h1>
 
-			<label for="n">Number of Sides (n):</label>
-			<input type="number" id="n" min="3" value="5">
+			<div class="control-group">
+				<label for="n">Number of Sides (n):</label>
+				<div class="input-wrapper">
+					<button onclick="changeValue('n', -1)">-</button>
+					<input type="number" id="n" min="3" value="5">
+					<button onclick="changeValue('n', 1)">+</button>
+				</div>
+			</div>
 
-			<label for="m">Points per Side (m):</label>
-			<input type="number" id="m" min="1" value="3">
+			<div class="control-group">
+				<label for="m">Points per Side (m):</label>
+				<div class="input-wrapper">
+					<button onclick="changeValue('m', -1)">-</button>
+					<input type="number" id="m" min="1" value="3">
+					<button onclick="changeValue('m', 1)">+</button>
+				</div>
+			</div>
 
 			<button id="todays" onclick="todays()">Today's Puzzle</button>
 			<button id="newgame" onclick="newGame()">New Game</button>
