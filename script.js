@@ -459,8 +459,6 @@ function newGame({ todays } = {}) {
 		playingTodays = false;
 	}
 
-	check_todays_solved();
-
 	const n = parseInt(document.getElementById('n').value);
 	const m = parseInt(document.getElementById('m').value);
 
@@ -574,6 +572,9 @@ function newGame({ todays } = {}) {
 		startTime: Date.now(),
 		wordAttempts: [],
 	}
+
+	check_todays_solved();
+
 	render();
 
 	// enable other buttons
