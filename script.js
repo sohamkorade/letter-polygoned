@@ -7,6 +7,9 @@ const activeWordDiv = document.getElementById('active-word');
 canvas.width = 600;
 canvas.height = 600;
 
+let getRand = Math.random;
+let playingTodays = false;
+
 let genWordList = [];
 let wordList = [];
 let letterPoints = [];
@@ -294,6 +297,29 @@ function check_game_over() {
 	return true;
 }
 
+function check_todays_solved() {
+	document.getElementById('todays').disabled = false;
+	document.getElementById('todays').innerText = `Today's Puzzle`;
+
+	let todays = localStorage.getItem('todays');
+	if (!todays) {
+		return false;
+	}
+	todays = JSON.parse(todays);
+	const { numWords, date, n, m } = todays;
+	const todaysDate = new Date().toDateString();
+	if (date !== todaysDate) {
+		return false;
+	}
+	if (n !== state.n || m !== state.m) {
+		return false;
+	}
+
+	document.getElementById('todays').disabled = true;
+	document.getElementById('todays').innerText = `Today's Puzzle (solved in ${numWords})`;
+	return true;
+}
+
 function backspace() {
 	state.activeWord = state.activeWord.slice(0, -1);
 	state.activeWordPoints.pop();
@@ -329,6 +355,17 @@ function enter() {
 	if (check_game_over()) {
 		const numWords = state.words.length;
 		alert(`Congratulations! You solved the puzzle using ${numWords} words.`);
+
+		if (playingTodays) {
+			// save to local storage
+			localStorage.setItem('todays', JSON.stringify({
+				numWords,
+				date: new Date().toDateString(),
+				n: state.n,
+				m: state.m,
+			}));
+			check_todays_solved();
+		}
 	}
 
 	render();
@@ -336,7 +373,7 @@ function enter() {
 
 function findWordsWithMLetters(wordList, m) {
 	// shuffle the word list
-	wordList = wordList.sort(() => Math.random() - 0.5);
+	wordList = wordList.toSorted(() => getRand() - 0.5);
 
 	for (let i = 0; i < wordList.length; i++) {
 		if (wordList[i].length < 3) {
@@ -390,7 +427,18 @@ function findWordsWithMLetters(wordList, m) {
 	return null;
 }
 
-function newGame() {
+function newGame({ todays } = {}) {
+	if (todays) {
+		const dateStr = new Date().toDateString();
+		getRand = getRandFunction(dateStr);
+		playingTodays = true;
+	} else {
+		getRand = Math.random;
+		playingTodays = false;
+	}
+
+	check_todays_solved();
+
 	const n = parseInt(document.getElementById('n').value);
 	const m = parseInt(document.getElementById('m').value);
 
@@ -518,6 +566,10 @@ function viewSolution() {
 
 	const solution = state.solutionWords.join(' - ');
 	alert(`Solution: ${solution}`);
+}
+
+function todays() {
+	newGame({ todays: true });
 }
 
 // fetch('https://raw.githubusercontent.com/first20hours/google-10000-english/refs/heads/master/google-10000-english.txt')
