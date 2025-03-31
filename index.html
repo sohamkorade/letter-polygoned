@@ -22,32 +22,38 @@
 	<div class="container">
 		<div class="controls">
 			<h1>Letter Polygon'd</h1>
-
+			<div class="button-grid">
 			<div class="control-group">
-				<label for="n">Number of Sides (n):</label>
+				<label for="n">Polygon Sides</label>
 				<div class="input-wrapper">
 					<button onclick="changeValue('n', -1)">-</button>
-					<input type="number" id="n" min="3" value="5">
+					<input id="n" min="3" value="5" disabled>
 					<button onclick="changeValue('n', 1)">+</button>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label for="m">Points per Side (m):</label>
+				<label for="m">Letters per Side</label>
 				<div class="input-wrapper">
 					<button onclick="changeValue('m', -1)">-</button>
-					<input type="number" id="m" min="1" value="3">
+					<input id="m" min="1" value="3" disabled>
 					<button onclick="changeValue('m', 1)">+</button>
 				</div>
 			</div>
-
-			<button id="todays" onclick="todays()">Today's Puzzle</button>
-			<button id="newgame" onclick="newGame()">New Game</button>
-				<button id="cancelgame" onclick="cancelGame()" disabled>Cancel Game</button>
-			<button id="viewsolution" onclick="viewSolution()" disabled>View Solution</button>
+			</div>
+			<div id="game-states"></div>
 			<hr>
-			<button id="backspace" onclick="backspace()" disabled>Backspace</button>
-			<button id="enter" onclick="enter()" disabled>Enter</button>
+			<div class="button-grid">
+				<button id="todays" onclick="todays()">Today's Puzzle</button>
+				<button id="newgame" onclick="newGame()">New Game</button>
+				<button id="cancelgame" onclick="cancelGame()" disabled>Cancel Game</button>
+				<button id="viewsolution" onclick="viewSolution()" disabled>View Solution</button>
+			</div>
+			<hr>
+			<div class="button-grid">
+				<button id="backspace" onclick="backspace()" disabled>Backspace</button>
+				<button id="enter" onclick="enter()" disabled>Enter</button>
+			</div>
 			<hr>
 			<div id="word-attempts"></div>
 
