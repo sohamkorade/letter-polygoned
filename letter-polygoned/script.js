@@ -247,7 +247,7 @@ function getClickedPointIndex(x, y) {
 
 function clickPoint(x, y) {
 	const clickedIndex = getClickedPointIndex(x, y);
-	console.log(clickedIndex);
+	// console.log(clickedIndex);
 	if (clickedIndex === null) {
 		return;
 	}
