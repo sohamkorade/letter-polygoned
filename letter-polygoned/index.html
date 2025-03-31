@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Letter Polygon'd</title>
 	<link rel="stylesheet" href="styles.css">
+	<link rel="manifest" href="manifest.json" />
 </head>
 
 <!-- Google tag (gtag.js) -->
@@ -67,6 +68,11 @@
 
 	<script src="prng.js"></script>
 	<script src="script.js"></script>
+	<script>
+		if (typeof navigator.serviceWorker !== 'undefined') {
+			navigator.serviceWorker.register('sw.js')
+		}
+	</script>
 </body>
 
 </html>
