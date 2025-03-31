@@ -1,5 +1,7 @@
 "use strict";
 
+const red_accented = "#D9534F";
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const activeWordDiv = document.getElementById('active-word');
@@ -120,7 +122,7 @@ function render() {
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
 		ctx.lineTo(x2, y2);
-		ctx.strokeStyle = '#000';
+		ctx.strokeStyle = 'black';
 		ctx.lineWidth = 2;
 		ctx.stroke();
 
@@ -200,7 +202,7 @@ function render() {
 
 		ctx.beginPath();
 		ctx.setLineDash([5, 5]);
-		ctx.strokeStyle = 'red';
+		ctx.strokeStyle = red_accented;
 		ctx.lineWidth = 2;
 		ctx.moveTo(start.x, start.y);
 		ctx.lineTo(end.x, end.y);
@@ -221,7 +223,7 @@ function render() {
 	if (state.recentPoint) {
 		ctx.beginPath();
 		ctx.arc(state.recentPoint.x, state.recentPoint.y, 6, 0, Math.PI * 2);
-		ctx.fillStyle = 'red';
+		ctx.fillStyle = red_accented;
 		ctx.fill();
 		ctx.stroke();
 	}
