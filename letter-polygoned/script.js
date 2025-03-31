@@ -1,6 +1,8 @@
 "use strict";
 
 const red_accented = "#D9534F";
+const black_accented = "#292b2c";
+const white_accented = "#f8f9fa";
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -122,7 +124,7 @@ function render() {
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
 		ctx.lineTo(x2, y2);
-		ctx.strokeStyle = 'black';
+		ctx.strokeStyle = black_accented;
 		ctx.lineWidth = 2;
 		ctx.stroke();
 
@@ -149,7 +151,7 @@ function render() {
 		const y = centerY + radius * Math.sin(angle);
 		ctx.lineTo(x, y);
 	}
-	ctx.fillStyle = 'white';
+	ctx.fillStyle = white_accented;
 	ctx.fill();
 
 	// Draw letters
@@ -158,9 +160,9 @@ function render() {
 
 		// for points and letters that have been used
 		if (usedLetters.has(letter)) {
-			ctx.fillStyle = 'black';
+			ctx.fillStyle = black_accented;
 		} else {
-			ctx.fillStyle = 'white';
+			ctx.fillStyle = white_accented;
 		}
 
 		// Draw point
@@ -185,7 +187,7 @@ function render() {
 
 			ctx.beginPath();
 			ctx.setLineDash([5, 5]);
-			ctx.strokeStyle = 'black';
+			ctx.strokeStyle = black_accented;
 			ctx.lineWidth = 2;
 			ctx.moveTo(start.x, start.y);
 			ctx.lineTo(end.x, end.y);
@@ -214,7 +216,7 @@ function render() {
 	for (const point of state.activeWordPoints) {
 		ctx.beginPath();
 		ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
-		ctx.fillStyle = 'white';
+		ctx.fillStyle = white_accented;
 		ctx.fill();
 		ctx.stroke();
 	}
