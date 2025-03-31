@@ -24,64 +24,34 @@ let state = {
 	recentPoint: null,
 	letters: [],
 	wordAttempts: [],
+	stateTag: null,
+	solved: false,
+	dateStr: null,
 }
+
+let allStates = {};
 
 // Function to draw the N-gon with labels
 function render() {
-	const { n, m } = state;
-	if (n < 3 || m < 1) return;
-
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	letterPoints = [];
 
-	const radius = Math.min(canvas.width, canvas.height) / 2.5;
-	const centerX = canvas.width / 2;
-	const centerY = canvas.height / 2;
-
-	// Draw N-gon
-	for (let i = 0; i < n; i++) {
-		const angle1 = (2 * Math.PI * i) / n;
-		const angle2 = (2 * Math.PI * (i + 1)) / n;
-
-		const x1 = centerX + radius * Math.cos(angle1);
-		const y1 = centerY + radius * Math.sin(angle1);
-
-		const x2 = centerX + radius * Math.cos(angle2);
-		const y2 = centerY + radius * Math.sin(angle2);
-
-		// Draw side
-		ctx.beginPath();
-		ctx.moveTo(x1, y1);
-		ctx.lineTo(x2, y2);
-		ctx.strokeStyle = '#000';
-		ctx.lineWidth = 2;
-		ctx.stroke();
-
-		// Place m points on each side
-		const specific_m = state.sides[i].length;
-		for (let j = 0; j < specific_m; j++) {
-			const t = (j + 1) / (specific_m + 1);
-			const px = x1 + t * (x2 - x1);
-			const py = y1 + t * (y2 - y1);
-
-			const letter = state.sides[i][j];
-
-			// Store letter point info
-			letterPoints.push({ x: px, y: py, letter, angle1, angle2, side: i });
+	// html stuff --------------------------------
+	// Game states
+	const gameStatesDiv = document.getElementById('game-states');
+	let gameStatesHTML = "";
+	for (let key in allStates) {
+		const solved = allStates[key].solved;
+		if (solved) {
+			gameStatesHTML += `<span class="tag" onclick="loadGameState('${key}')">${key}</span>`;
+		} else {
+			gameStatesHTML += `<span class="tag" onclick="loadGameState('${key}')">${key}</span>`;
 		}
 	}
+	gameStatesDiv.innerHTML = gameStatesHTML;
 
-	// fill polygon with white
-	ctx.beginPath();
-	ctx.moveTo(centerX + radius, centerY);
-	for (let i = 1; i <= n; i++) {
-		const angle = (2 * Math.PI * i) / n;
-		const x = centerX + radius * Math.cos(angle);
-		const y = centerY + radius * Math.sin(angle);
-		ctx.lineTo(x, y);
+	if (!state) {
+		return;
 	}
-	ctx.fillStyle = 'white';
-	ctx.fill();
 
 	const usedLetters = new Set();
 	let activeWordDivHTML = "";
@@ -108,10 +78,77 @@ function render() {
 	// Word attempts
 	const wordAttemptsDiv = document.getElementById('word-attempts');
 	let wordAttemptsHTML = "";
+	let wanted_letter = null;
+	if (state.activeWord.length !== 0) {
+		wanted_letter = state.activeWord[state.activeWord.length - 1];
+	}
 	for (let word of state.wordAttempts) {
-		wordAttemptsHTML += `<span class="attempt-word" onclick="addWord('${word}')">${word}</span>`;
+		if (wanted_letter === null || word.startsWith(wanted_letter)) {
+			wordAttemptsHTML += `<span class="tag solved" onclick="addWord('${word}')">${word}</span>`;
+		} else {
+			wordAttemptsHTML += `<span class="tag" onclick="addWord('${word}')">${word}</span>`;
+		}
 	}
 	wordAttemptsDiv.innerHTML = wordAttemptsHTML;
+
+	// canvas stuff --------------------------------
+	const { n, m, sides } = state;
+	if (n < 3 || m < 1) return;
+
+	letterPoints = [];
+
+	const radius = Math.min(canvas.width, canvas.height) / 2.5;
+	const centerX = canvas.width / 2;
+	const centerY = canvas.height / 2;
+
+	if (!sides || sides.length !== n) {
+		return;
+	}
+
+	// Draw N-gon
+	for (let i = 0; i < n; i++) {
+		const angle1 = (2 * Math.PI * i) / n;
+		const angle2 = (2 * Math.PI * (i + 1)) / n;
+
+		const x1 = centerX + radius * Math.cos(angle1);
+		const y1 = centerY + radius * Math.sin(angle1);
+
+		const x2 = centerX + radius * Math.cos(angle2);
+		const y2 = centerY + radius * Math.sin(angle2);
+
+		// Draw side
+		ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.strokeStyle = '#000';
+		ctx.lineWidth = 2;
+		ctx.stroke();
+
+		// Place m points on each side
+		const specific_m = sides[i].length;
+		for (let j = 0; j < specific_m; j++) {
+			const t = (j + 1) / (specific_m + 1);
+			const px = x1 + t * (x2 - x1);
+			const py = y1 + t * (y2 - y1);
+
+			const letter = sides[i][j];
+
+			// Store letter point info
+			letterPoints.push({ x: px, y: py, letter, angle1, angle2, side: i });
+		}
+	}
+
+	// fill polygon with white
+	ctx.beginPath();
+	ctx.moveTo(centerX + radius, centerY);
+	for (let i = 1; i <= n; i++) {
+		const angle = (2 * Math.PI * i) / n;
+		const x = centerX + radius * Math.cos(angle);
+		const y = centerY + radius * Math.sin(angle);
+		ctx.lineTo(x, y);
+	}
+	ctx.fillStyle = 'white';
+	ctx.fill();
 
 	// Draw letters
 	for (let point of letterPoints) {
@@ -245,11 +282,28 @@ function addLetter(letter) {
 	render();
 }
 
+function checkWordValidity(word) {
+	if (word.length < 3) {
+		return false;
+	}
+	let wanted_letter = null;
+	if (state.activeWord.length !== 0) {
+		wanted_letter = state.activeWord[state.activeWord.length - 1];
+	}
+	if (wanted_letter !== null && !word.startsWith(wanted_letter)) {
+		return false;
+	}
+	return true;
+}
+
 function addWord(word) {
-	// assume word is valid
+	if (!checkWordValidity(word)) {
+		return;
+	}
 	for (let letter of word) {
 		addLetter(letter);
 	}
+	enter();
 }
 
 // Event listener for canvas clicks
@@ -286,16 +340,16 @@ window.addEventListener('keydown', (event) => {
 });
 
 function changeValue(id, delta) {
-    const input = document.getElementById(id);
-    let newValue = parseInt(input.value) + delta;
+	const input = document.getElementById(id);
+	let newValue = parseInt(input.value) + delta;
 
-    // Ensure values stay within the valid range
-    if (id === 'n' && newValue >= 3) {
-        input.value = newValue;
-    }
-    if (id === 'm' && newValue >= 1) {
-        input.value = newValue;
-    }
+	// Ensure values stay within the valid range
+	if (id === 'n' && newValue >= 3) {
+		input.value = newValue;
+	}
+	if (id === 'm' && newValue >= 1) {
+		input.value = newValue;
+	}
 }
 
 function check_word(word) {
@@ -390,6 +444,7 @@ function enter() {
 	if (check_game_over()) {
 		const numWords = state.words.length;
 		alert(`Congratulations! You solved the puzzle using ${numWords} words.`);
+		state.solved = true;
 
 		if (playingTodays) {
 			// save to local storage
@@ -462,7 +517,72 @@ function findWordsWithMLetters(wordList, m) {
 	return null;
 }
 
+function loadGameState(stateTag) {
+	if (allStates[stateTag]) {
+		state = allStates[stateTag];
+		const { n, m } = state;
+		document.getElementById('n').value = n;
+		document.getElementById('m').value = m;
+		render();
+		// enable other buttons
+		document.getElementById('enter').disabled = false;
+		document.getElementById('backspace').disabled = false;
+		document.getElementById('cancelgame').disabled = false;
+		document.getElementById('viewsolution').disabled = false;
+		return;
+	}
+	// new game
+	const [type, n, m] = stateTag.split('_');
+	document.getElementById('n').value = n;
+	document.getElementById('m').value = m;
+	newGame({ todays: type === 'todays' });
+}
+
+function loadAllGameStates() {
+	const allStatesStr = localStorage.getItem('letterPolygoned');
+	if (!allStatesStr) {
+		return;
+	}
+	const allStatesObj = JSON.parse(allStatesStr);
+	const dateStr = new Date().toDateString();
+	allStates = {};
+	for (let key in allStatesObj) {
+		if (allStatesObj[key].stateTag.startsWith('todays')) {
+			// don't load old todays
+			if (allStatesObj[key].dateStr !== dateStr) {
+				continue;
+			}
+		}
+		allStates[key] = allStatesObj[key];
+	}
+}
+
+function saveAllGameStates() {
+	localStorage.setItem('letterPolygoned', JSON.stringify(allStates));
+}
+
+function cancelGame() {
+	if (!confirm("Are you sure you want to cancel the game?")) {
+		return;
+	}
+	// remove from allStates
+	delete allStates[state.stateTag];
+	saveAllGameStates();
+	state = null;
+	render();
+	// disable other buttons
+	document.getElementById('enter').disabled = true;
+	document.getElementById('backspace').disabled = true;
+	document.getElementById('cancelgame').disabled = true;
+	document.getElementById('viewsolution').disabled = true;
+}
+
 function newGame({ todays } = {}) {
+	// ask if user wants to restart
+	if (state.recentPoint && !confirm("You already have a game in progress. Do you want to start a new game?")) {
+		return;
+	}
+
 	if (todays) {
 		const dateStr = new Date().toDateString();
 		getRand = getRandFunction(dateStr);
@@ -483,6 +603,8 @@ function newGame({ todays } = {}) {
 		alert("M must be at least 1 to place letters on each side");
 		return;
 	}
+
+	const stateTag = `${playingTodays ? 'todays' : 'normal'}_${n}_${m}`;
 
 	const numLetters = n * m;
 
@@ -584,7 +706,13 @@ function newGame({ todays } = {}) {
 		solutionWords,
 		startTime: Date.now(),
 		wordAttempts: [],
+		stateTag,
+		solved: false,
+		dateStr: new Date().toDateString(),
 	}
+
+	allStates[stateTag] = state;
+	saveAllGameStates();
 
 	check_todays_solved();
 
@@ -593,6 +721,7 @@ function newGame({ todays } = {}) {
 	// enable other buttons
 	document.getElementById('enter').disabled = false;
 	document.getElementById('backspace').disabled = false;
+	document.getElementById('cancelgame').disabled = false;
 	document.getElementById('viewsolution').disabled = false;
 }
 
@@ -632,4 +761,13 @@ fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.t
 		wordList = text.split('\n');
 	});
 
-newGame();
+loadAllGameStates();
+if (Object.keys(allStates).length === 0) {
+	newGame();
+} else {
+	loadGameState(Object.keys(allStates)[0]);
+}
+render();
+
+// TODO
+// add cute x button to remove word attempts
